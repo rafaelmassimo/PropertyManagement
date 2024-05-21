@@ -20,7 +20,7 @@ export async function fetchProperties() {
 }
 
 
-//Fecth one property by ID
+//Fetch one property by ID
 export async function fetchPropertiesById(id) {
 	try {
 		//handle the case the domain is not available yet
