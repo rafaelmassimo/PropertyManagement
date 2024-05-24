@@ -15,7 +15,7 @@ const PropertySchema = new Schema(
 			type: String,
 			required: true,
 		},
-		descriptio: {
+		description: {
 			type: String,
 		},
 		location: {

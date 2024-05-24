@@ -1,6 +1,7 @@
 'use client';
 
 import PropertyDetails from '@/components/PropertyDetails';
+import PropertyImages from '@/components/PropertyImages';
 import PropertyHeaderImage from '@/components/PropertyHeaderImage';
 import Spinner from '@/components/Spinner';
 import { fetchPropertiesById } from '@/utils/request';
@@ -143,6 +144,7 @@ const PropertyPage = async () => {
 							</div>
 						</div>
 					</section>
+					<PropertyImages images={property.images} />
 				</>
 			)}
 		</>
