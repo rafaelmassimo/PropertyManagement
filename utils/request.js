@@ -1,6 +1,6 @@
 const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
 
-//Fecth all properties
+//Fetch all properties
 export async function fetchProperties() {
 	try {
 		//handle the case the domain is not available yet
@@ -19,7 +19,6 @@ export async function fetchProperties() {
 	}
 }
 
-
 //Fetch one property by ID
 export async function fetchPropertiesById(id) {
 	try {
@@ -33,10 +32,8 @@ export async function fetchPropertiesById(id) {
 			throw new Error('Something went wrong fetching data');
 		}
 		return response.json();
-
-	} catch (error) { 
+	} catch (error) {
 		console.log(error);
 		return null;
 	}
 }
-

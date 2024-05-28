@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const ProfilePage = () => {
 	const { data: session } = useSession();
@@ -42,7 +43,26 @@ const ProfilePage = () => {
 		}
 	}, [session]);
 
-    const handlePropertyDelete = () =>{}
+	const handlePropertyDelete = async (propertyId) => {
+		const confirmDelete = window.confirm('Are you sure you want to delete this property?');
+
+		if (!confirmDelete) return;
+
+		try {
+			const result = await fetch(`/api/properties/${propertyId}`, { method: 'DELETE' });
+			if (result.status === 200) {
+				// Remove Property from UI
+				const updatedProperties = properties.filter((property) => property._id !== propertyId); //Im saying, give me all the properties that are not the one that I want to delete
+				setProperties(updatedProperties);
+				toast.success('Property deleted successfully')
+			} else {
+				toast.error('Failed to delete property');
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error('Failed to delete property');
+		}
+	};
 
 	return (
 		<section className="bg-blue-50">
@@ -81,14 +101,17 @@ const ProfilePage = () => {
 												className="h-32 w-full rounded-md object-cover"
 												src={property.images[0]}
 												alt={property.description}
-                                                width={500}
-                                                height={100}
-                                                priority={true}
+												width={500}
+												height={100}
+												priority={true}
 											/>
 										</Link>
 										<div className="mt-2">
 											<p className="text-lg font-semibold">{property.name}</p>
-											<p className="text-gray-600">Address: {property.location.street} {property.location.city} {property.location.state}</p>
+											<p className="text-gray-600">
+												Address: {property.location.street} {property.location.city}{' '}
+												{property.location.state}
+											</p>
 										</div>
 										<div className="mt-2">
 											<Link
@@ -98,7 +121,7 @@ const ProfilePage = () => {
 												Edit
 											</Link>
 											<button
-                                            onClick={() => handlePropertyDelete(property._id)}
+												onClick={() => handlePropertyDelete(property._id)}
 												className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
 												type="button"
 											>

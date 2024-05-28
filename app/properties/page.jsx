@@ -1,9 +1,7 @@
 import PropertyCard from '@/components/PropertyCard';
 import { fetchProperties } from '@/utils/request';
 
-
 const PropertiesPage = async () => {
-
 	const properties = await fetchProperties();
 	properties.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -15,13 +13,13 @@ const PropertiesPage = async () => {
 				) : (
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 						{properties.map((property) => (
-							<PropertyCard key={property.id} property={property}/>
+							<PropertyCard key={property.id} property={property} />
 						))}
 					</div>
 				)}
 			</div>
 		</section>
 	);
-}
+};
 
 export default PropertiesPage;
