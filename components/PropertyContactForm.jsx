@@ -1,11 +1,14 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BiSolidMessageAltCheck } from 'react-icons/bi';
 import { FaPaperPlane } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const PropertyContactForm = ({ property }) => {
+	const { data: session } = useSession();
+
 	const [name, setName] = useState('');
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
@@ -36,7 +39,8 @@ const PropertyContactForm = ({ property }) => {
 				toast.success('Message sent successfully');
 				setWasSubmitted(true);
 			} else if (res.status === 400 || res.status === 401) {
-				toast.error(data.message);
+				const dataObj = await res.json();
+				toast.error(dataObj.message);
 			} else {
 				toast.error('Error Sending Form');
 			}
@@ -54,7 +58,9 @@ const PropertyContactForm = ({ property }) => {
 	return (
 		<div className="bg-white p-6 rounded-lg shadow-md">
 			<h3 className="text-xl font-bold mb-6">Contact Property Manager</h3>
-			{wasSubmitted ? (
+			{!session ? (
+				<p>You must be logged in to send a message</p>
+			) : wasSubmitted ? (
 				<p className="text-green-400 mb-4  flex justify-center">
 					<BiSolidMessageAltCheck className="text-4xl mr-2" />
 					Your Message has Been Sent
