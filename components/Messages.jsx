@@ -11,7 +11,7 @@ const Messages = () => {
 	useEffect(() => {
 		const fetchMessages = async () => {
 			try {
-				const res = await fetch('/api/messages',{cache: 'no-cache'});
+				const res = await fetch('/api/messages',{next: {tags: ['messages']}});
 
 				if (res.status === 200) {
 					const data = await res.json();

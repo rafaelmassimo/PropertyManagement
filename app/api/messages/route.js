@@ -14,21 +14,28 @@ export const GET = async () => {
 				JSON.stringify({ message: 'You must be logged in to sent the message' }),
 				{ status: 401 },
 			);
-		};
+		}
 
-		const {userId} = sessionUser;
+		const { userId } = sessionUser;
 
-		const messages = await Message.find({recipient: userId}).populate('sender', 'username').populate('property', 'name');
+		const readMessages = await Message.find({ recipient: userId, read: true })
+			.sort({ updatedAt: -1 }) // Is going to sort messages by the created date in descending order
+			.populate('sender', 'username')
+			.populate('property', 'name');
 
-		return new Response(JSON.stringify(messages), {status: 200});
+		const unReadMessages = await Message.find({ recipient: userId, read: false })
+			.sort({ updatedAt: -1 }) // Is going to sort messages by the created date in descending order
+			.populate('sender', 'username')
+			.populate('property', 'name');
 
+		const messages = [...unReadMessages, ...readMessages];
+
+		return new Response(JSON.stringify(messages), { status: 200 });
 	} catch (error) {
 		console.log(error);
 		return new Response('Something went wrong', { status: 500 });
 	}
-}
-
-
+};
 
 //POST /api/messages
 export const POST = async (request) => {
@@ -72,5 +79,3 @@ export const POST = async (request) => {
 		return new Response('Something went wrong', { status: 500 });
 	}
 };
-
-

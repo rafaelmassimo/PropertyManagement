@@ -1,6 +1,7 @@
 import connectDB from '@/config/database';
 import Message from '@/models/Message';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export const dynamic = 'force dynamic';
 
@@ -36,6 +37,47 @@ export const PUT = async (request, { params }) => {
 		await message.save();
 
 		return new Response(JSON.stringify(message), { status: 200 });
+	} catch (error) {
+        console.log(error);
+		return new Response('Something went wrong', { status: 500 });
+
+    }
+};
+
+
+// DELETE /api/messages/:id
+export const DELETE = async (request, { params }) => {
+	try {
+		await connectDB();
+
+		const { id } = params;
+		const sessionUser = await getSessionUser();
+
+		if (!sessionUser || !sessionUser.user) {
+			return new Response(
+				JSON.stringify({ message: 'You must be logged in to sent the message' }),
+				{ status: 401 },
+			);
+		}
+
+		const { userId } = sessionUser;
+
+		const message = await Message.findById(id);
+		if (!message) {
+			return new Response('Message not found', { status: 404 });
+		}
+		// Verify Ownership
+		if (message.recipient.toString() !== userId) {
+			return new Response('Unauthorized', { status: 401 });
+		}
+
+		// DELETE Message
+		await message.deleteOne();
+		revalidateTag('messages'); //is not working
+
+		revalidatePath('/messages');
+		return new Response('Message Deleted', { status: 200 });
+
 	} catch (error) {
         console.log(error);
 		return new Response('Something went wrong', { status: 500 });

@@ -1,23 +1,24 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const Message = ({ message }) => {
 	const [isRead, setIsRead] = useState(message.read);
+	const [isDeleted, setIsDeleted] = useState(false);
 
 	const handleRedCLick = async () => {
 		try {
 			const res = await fetch(`/api/messages/${message._id}`, {
 				method: 'PUT',
-			})
-			if(res.status === 200){
-
-				const {read} = await res.json();
+				cache: 'no-cache',
+			});
+			if (res.status === 200) {
+				const { read } = await res.json();
 
 				setIsRead(read);
 
-				if(read){
+				if (read) {
 					toast.success('Marked as Read');
 				} else {
 					toast.success('Marked as New');
@@ -28,6 +29,27 @@ const Message = ({ message }) => {
 			toast.error('Something went wrong');
 		}
 	};
+
+	const handleDeleteClick = async () => {
+		try {
+			const res = await fetch(`/api/messages/${message._id}`, {
+				method: 'DELETE',
+				cache: 'no-cache',
+			});
+
+			if (res.status === 200) {
+				setIsDeleted(true);
+				toast.success('Message Deleted');
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error('Message was not deleted');
+		}
+	};
+	// To make the message disappear after it is deleted, because is not going to render anymore this message in the page
+	if (isDeleted) {
+		return null;
+	}
 
 	return (
 		<div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200">
@@ -40,9 +62,7 @@ const Message = ({ message }) => {
 				<span className="font-bold">Property Inquiry:</span>
 				{message.property.name}
 			</h2>
-			<p className="text-gray-700">
-				{message.body}
-			</p>
+			<p className="text-gray-700">{message.body}</p>
 
 			<ul className="mt-4">
 				<li>
@@ -51,24 +71,36 @@ const Message = ({ message }) => {
 
 				<li>
 					<strong>Reply Email:</strong>
-                <a href={`mailto:${message.email}`} className="text-blue-500">
-                    {' '}{message.email}
+					<a href={`mailto:${message.email}`} className="text-blue-500">
+						{' '}
+						{message.email}
 					</a>
 				</li>
 				<li>
 					<strong>Reply Phone:</strong>
 					<a href={`tel:${message.phone}`} className="text-blue-500">
-						{' '}{message.phone}
+						{' '}
+						{message.phone}
 					</a>
 				</li>
 				<li>
-					<strong>Received:</strong>{' '}{new Date(message.createdAt).toLocaleString()}
+					<strong>Received:</strong> {new Date(message.createdAt).toLocaleString()}
 				</li>
 			</ul>
-			<button onClick={handleRedCLick} className={`mt-4 mr-3 ${isRead ? 'bg-gray-300' : 'bg-blue-500 text-white'} py-1 px-3 rounded-md`}>
+			<button
+				onClick={handleRedCLick}
+				className={`mt-4 mr-3 ${
+					isRead ? 'bg-gray-300' : 'bg-blue-500 text-white'
+				} py-1 px-3 rounded-md`}
+			>
 				{isRead ? 'Mark as New' : 'Mark as Read'}
 			</button>
-			<button className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md">Delete</button>
+			<button
+				onClick={handleDeleteClick}
+				className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md"
+			>
+				Delete
+			</button>
 		</div>
 	);
 };
