@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Spinner from './Spinner';
 import Message from './Message';
+import Spinner from './Spinner';
 
 const Messages = () => {
 	const [messages, setMessages] = useState([]);
@@ -11,7 +11,7 @@ const Messages = () => {
 	useEffect(() => {
 		const fetchMessages = async () => {
 			try {
-				const res = await fetch('/api/messages',{next: {tags: ['messages']}});
+				const res = await fetch('/api/messages', { next: { tags: ['messages'] } });
 
 				if (res.status === 200) {
 					const data = await res.json();
@@ -38,13 +38,10 @@ const Messages = () => {
 
 					<div className="space-y-4">
 						{messages.length === 0 ? (
-                            <p>You have no messages</p>
-                        ) : (
-                            messages.map((message)=> (
-                                console.log(message),
-                                <Message key={message._id} message={message} />
-                            ))
-                        )}
+							<p>You have no messages</p>
+						) : (
+							messages.map((message) => <Message key={message._id} message={message} />)
+						)}
 					</div>
 				</div>
 			</div>

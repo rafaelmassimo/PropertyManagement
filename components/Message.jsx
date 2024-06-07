@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useGlobalContext } from '@/context/GlobalContext';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 const Message = ({ message }) => {
 	const [isRead, setIsRead] = useState(message.read);
 	const [isDeleted, setIsDeleted] = useState(false);
 
-	const handleRedCLick = async () => {
+	const { setUnreadCount } = useGlobalContext();
+
+	const handleReadCLick = async () => {
 		try {
 			const res = await fetch(`/api/messages/${message._id}`, {
 				method: 'PUT',
@@ -17,6 +20,7 @@ const Message = ({ message }) => {
 				const { read } = await res.json();
 
 				setIsRead(read);
+				setUnreadCount((prev) => (read ? prev - 1 : prev + 1)); // Here you can increase or decrease the count of unread messages globally
 
 				if (read) {
 					toast.success('Marked as Read');
@@ -39,6 +43,8 @@ const Message = ({ message }) => {
 
 			if (res.status === 200) {
 				setIsDeleted(true);
+				setUnreadCount((prev) => prev - 1); // Here you can increase the count of unread messages globally
+
 				toast.success('Message Deleted');
 			}
 		} catch (error) {
@@ -88,7 +94,7 @@ const Message = ({ message }) => {
 				</li>
 			</ul>
 			<button
-				onClick={handleRedCLick}
+				onClick={handleReadCLick}
 				className={`mt-4 mr-3 ${
 					isRead ? 'bg-gray-300' : 'bg-blue-500 text-white'
 				} py-1 px-3 rounded-md`}
