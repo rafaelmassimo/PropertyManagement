@@ -7,9 +7,22 @@ import cloudinary from '@/config/cloudinary';
 export const GET = async (request) => {
 	try {
 		await connectDB();
-		const properties = await Property.find({});
+		// Here we are going to get the page and pageSize from the URL fired from the properties.jsx file
+		const page = request.nextUrl.searchParams.get('page') || 1; // if you add the + operator you can convert the string to a number ex: page = +request...
+		const pageSize = request.nextUrl.searchParams.get('pageSize') || 3;
 
-		return new Response(JSON.stringify(properties, { status: 200 }));
+		const skip = (page - 1) * pageSize;
+
+		const total = await Property.countDocuments();
+		const properties = await Property.find({}).skip(skip).limit(pageSize);
+
+
+		const result = {
+			total, // total number of properties
+			properties, // properties for the current page
+		}
+
+		return new Response(JSON.stringify(result, { status: 200 }));
 	} catch (error) {
 		console.log(error);
 		return new Response('Something Went Wrong', { status: 500 }); //this the user is gonna see in his screen

@@ -3,20 +3,25 @@
 import { useEffect, useState } from 'react';
 import PropertyCard from './PropertyCard';
 import Spinner from './Spinner';
+import Pagination from './Pagination';
 
 const Properties = () => {
 	const [properties, setProperties] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(3); //Here you can change the number of properties to be showed per page (3, 6, 9, 12, etc.)
+	const [totalItems, setTotalItems] = useState(0); //Here you can find the total number of properties in the DB from Properties.countDocuments();
 
 	useEffect(() => {
 		const fetchProperties = async () => {
-			try {
-				const res = await fetch('/api/properties');
+			try {//This is going to say to the server how many properties we want to show per page being destructuring in the searchParams() method
+				const res = await fetch(`/api/properties?page=${page}&pageSize=${pageSize}`); 
 				if (!res.ok) {
 					throw new Error('Failed to fetch properties');
 				}
 				const data = await res.json();
-				setProperties(data);
+				setProperties(data.properties);
+				setTotalItems(data.total)
 			} catch (error) {
 				console.log('Network error', error);
 			} finally {
@@ -25,12 +30,16 @@ const Properties = () => {
 		};
 
 		fetchProperties();
-	}, []);
+	}, [page, pageSize]);
 
 	//>> Another way to show the spinner
 	// if (loading) {
 	// 	return <Spinner loading={loading} />;
 	// }
+
+const handlePageChange = (newPage) => {
+	setPage(newPage);
+}
 
 	return loading ? (
 		<Spinner loading={loading} />
@@ -46,6 +55,7 @@ const Properties = () => {
 						))}
 					</div>
 				)}
+				<Pagination page={page} pageSize={pageSize} totalItems={totalItems} onPageChange={handlePageChange}/>
 			</div>
 		</section>
 	);
