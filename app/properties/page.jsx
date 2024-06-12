@@ -1,13 +1,17 @@
+import Properties from '@/components/Properties';
+import PropertySearchForm from '@/components/PropertySearchForm';
 
-import Link from 'next/link';
-
-function PropertyPage() {
+const PropertiesPage = async () => {
 	return (
-		<div>
-			<h1 className="text-3xl">Properties</h1>
-			<Link href="/">Back to Home</Link>
-		</div>
+		<>
+			<section className="bg-blue-700 py-4">
+				<div className="max-w-7xl mx-auto px-4 flex flex-col sm:px-6 lg:px-8">
+					<PropertySearchForm />
+				</div>
+			</section>
+			<Properties />
+		</>
 	);
-}
+};
 
-export default PropertyPage;
+export default PropertiesPage;
