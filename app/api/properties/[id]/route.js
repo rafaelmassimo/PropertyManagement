@@ -2,6 +2,9 @@ import connectDB from '@/config/database';
 import Property from '@/models/Property';
 import { getSessionUser } from '@/utils/getSessionUser';
 
+export const dynamic = 'force-dynamic';
+
+
 //>> Method: GET by ID
 //>> Path: /api/properties/:id
 export const GET = async (request, { params: { id } }) => {

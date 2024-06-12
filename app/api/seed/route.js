@@ -2,14 +2,16 @@ import connectDB from '@/config/database';
 import Message from '@/models/Message';
 import { getSessionUser } from '@/utils/getSessionUser';
 
+
+export const dynamic = 'force-dynamic';
+
 export const POST = async (request) => {
 	try {
 		await connectDB();
-        const { property, recipient} = await request.json();
+		const { property, recipient } = await request.json();
 
 		const sessionUser = await getSessionUser();
 		const { user } = sessionUser;
-
 
 		const messages = [
 			{
