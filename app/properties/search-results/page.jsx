@@ -37,7 +37,7 @@ const SearchResultsPage = () => {
 		};
 
 		fetchResults();
-	}, [location,propertyType]);
+	}, [location, propertyType]);
 
 	return (
 		<>
@@ -63,8 +63,10 @@ const SearchResultsPage = () => {
 							<p>No Search Result Found</p>
 						) : (
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-								{properties.map((property) => (
-									<PropertyCard key={property.id} property={property} />
+								{properties.map((property, index) => (
+									<div key={index}>
+										<PropertyCard key={property.id} property={property} />
+									</div>
 								))}
 							</div>
 						)}

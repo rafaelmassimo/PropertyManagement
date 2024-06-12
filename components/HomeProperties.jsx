@@ -15,8 +15,10 @@ const HomeProperties = async () => {
 						{recentProperties === 0 ? (
 							<p>No properties Found</p>
 						) : (
-							recentProperties.map((property) => (
-								<PropertyCard key={property.id} property={property} />
+							recentProperties.map((property, index) => (
+								<div key={index}>
+									<PropertyCard key={property.id} property={property} />
+								</div>
 							))
 						)}
 					</div>
